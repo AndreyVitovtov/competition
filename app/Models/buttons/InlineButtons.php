@@ -43,5 +43,12 @@ class InlineButtons {
         return [$languages];
     }
 
+    public static function like() {
+        return [[[
+                "text" => "{like}",
+                "callback_data" => "like__50"
+            ]]];
+    }
+
 
 }

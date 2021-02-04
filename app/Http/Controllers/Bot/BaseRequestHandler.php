@@ -43,7 +43,7 @@
             return $this->chat;
         }
 
-        public function getUserId(): int {
+        public function getUserId(): ? int {
             if($this->userId) {
                 return $this->userId;
             }
@@ -61,6 +61,10 @@
         }
 
         public function callMethodIfExists(): void {
+            if(substr($this->getChat(), 0, 1) == '-') {
+                $this->methodFromGroupAndChat();
+                return;
+            }
             $nameCommand = $this->getMethodName();
             if($nameCommand == null) return;
             if(substr($nameCommand, 0, 4) == "http") return;
@@ -415,5 +419,16 @@
 
         public function getMessage() {
             return $this->getBot()->getMessage();
+        }
+
+        public function getChatMember($idUser, $chat, $status = false) {
+            $result = json_decode($this->getBot()->getChatMember($idUser, $chat))->result->status ?? null;
+            if($status) {
+                return $result;
+            }
+            if($result == 'creator' || $result == 'administrator' || $result == 'member' || $result == 'restricted') {
+                return true;
+            }
+            return false;
         }
     }

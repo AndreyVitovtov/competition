@@ -192,7 +192,9 @@ trait Universal {
                 'text' => 'text',
                 'document' => 'document',
                 'photo' => 'photo',
-                'bot_command' => 'entities'
+                'bot_command' => 'entities',
+                'new_chat_participant' => 'new_chat_participant',
+                'left_chat_participant' => 'left_chat_participant'
             ];
 
             foreach($rules as $type => $rule) {
@@ -355,7 +357,18 @@ trait Universal {
             elseif($this->type == "callback_query") {
                 $data = [
                     'message_id' => $request->callback_query->message->message_id,
-                    'data' => $request->callback_query->data
+                    'data' => $request->callback_query->data,
+                    'from' => [
+                        'id' => $request->callback_query->from->id,
+                        'first_name' => $request->callback_query->from->first_name,
+                        'last_name' => $request->callback_query->from->last_name,
+                        'username' => $request->callback_query->from->username
+                    ],
+                    'chat' => [
+                        'id' => $request->callback_query->message->chat->id,
+                        'title' => $request->callback_query->message->chat->title,
+                        'type' => $request->callback_query->message->chat->type
+                    ]
                 ];
             }
             elseif($this->type == "bot_command") {
@@ -380,6 +393,52 @@ trait Universal {
             elseif($this->type == "contact") {
                 $data = [
                     'phone' => $request->message->contact->phone_number
+                ];
+            }
+            elseif($this->type == "new_chat_participant") {
+                $data = [
+                    'message_id' => $request->message->message_id ?? null,
+                    'from' => [
+                        'id' => $request->message->from->id ?? null,
+                        'first_name' => $request->message->from->first_name ?? null,
+                        'last_name' => $request->message->from->last_name ?? null,
+                        'username' => $request->message->from->username ?? null,
+                    ],
+                    'whom' => [
+                        'id' => $request->message->new_chat_participant->id,
+                        'first_name' => $request->message->new_chat_participant->first_name ?? null,
+                        'last_name' => $request->message->new_chat_participant->last_name ?? null,
+                        'username' => $request->message->new_chat_participant->username ?? null,
+                    ],
+                    'chat' => [
+                        'id' => $request->message->chat->id ?? null,
+                        'title' => $request->message->chat->title ?? null,
+                        'type' => $request->message->chat->type ?? null,
+                    ],
+                    'date' => $request->message->date ?? null
+                ];
+            }
+            elseif($this->type == 'left_chat_participant') {
+                $data = [
+                    'message_id' => $request->message->message_id ?? null,
+                    'from' => [
+                        'id' => $request->message->from->id ?? null,
+                        'first_name' => $request->message->from->first_name ?? null,
+                        'last_name' => $request->message->from->last_name ?? null,
+                        'username' => $request->message->from->username ?? null,
+                    ],
+                    'whom' => [
+                        'id' => $request->message->left_chat_participant->id,
+                        'first_name' => $request->message->left_chat_participant->first_name ?? null,
+                        'last_name' => $request->message->left_chat_participant->last_name ?? null,
+                        'username' => $request->message->left_chat_participant->username ?? null,
+                    ],
+                    'chat' => [
+                        'id' => $request->message->chat->id ?? null,
+                        'title' => $request->message->chat->title ?? null,
+                        'type' => $request->message->chat->type ?? null,
+                    ],
+                    'date' => $request->message->date ?? null
                 ];
             }
             else {
