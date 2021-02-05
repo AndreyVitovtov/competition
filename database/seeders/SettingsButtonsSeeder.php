@@ -13,7 +13,7 @@ class SettingsButtonsSeeder extends Seeder {
      * @return void
      */
     public function run() {
-        DB::table('settings_buttons')->insert([
+        DB::table('settings_buttons_ru')->insert([
             ["id" => "1","name" => "start","text" => "U3RhcnQg8J+agA==","menu" => "Старт","menu_us" => "Start"],
             ["id" => "2","name" => "back","text" => "8J+UmSDQndCw0LfQsNC0","menu" => "back","menu_us" => "back"],
             ["id" => "3","name" => "contacts","text" => "4pyJINCf0L7QtNC00LXRgNC20LrQsA==","menu" => "Главное меню","menu_us" => "Main menu"],

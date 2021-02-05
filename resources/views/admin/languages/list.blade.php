@@ -44,15 +44,17 @@
                         {{ base64_decode($lang->emoji) }}
                     </td>
                     <td class="actions">
-                        <div>
-                            <form action="{{ route('languages-delete') }}" method="POST">
-                                @csrf
-                                <input type="hidden" name="id" value="{{ $lang->id }}">
-                                <button>
-                                    <i class='icon-trash-empty'></i>
-                                </button>
-                            </form>
-                        </div>
+                        @if($lang->id != '1')
+                            <div>
+                                <form action="{{ route('languages-delete') }}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="id" value="{{ $lang->id }}">
+                                    <button>
+                                        <i class='icon-trash-empty'></i>
+                                    </button>
+                                </form>
+                            </div>
+                        @endif
                     </td>
                 </tr>
             @endforeach

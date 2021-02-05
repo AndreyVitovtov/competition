@@ -29,10 +29,7 @@ class InlineButtons {
     }
 
     public static function languages() {
-        $languages = [
-            'text' => DEFAULT_LANGUAGE,
-            'callback_data' => 'lang__0'
-        ];
+        $languages = [];
         $lang = Language::all()->toArray();
         foreach ($lang as $l) {
             $languages[] = [

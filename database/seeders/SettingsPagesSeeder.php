@@ -14,7 +14,7 @@ class SettingsPagesSeeder extends Seeder {
      */
     public function run() {
 
-        DB::table('settings_pages')->insert([
+        DB::table('settings_pages_ru')->insert([
             ["id" => "1","name" => "greeting","text" => "0J3QsNC20LzQuNGC0LUgU3RhcnQg8J+agCDQtNC70Y8g0L/RgNC+0LTQvtC70LbQtdC90LjRjw==","description" => "Приветствие","description_us" => "Greeting"],
             ["id" => "2","name" => "welcome","text" => "0J/RgNC40LLQtdGC0YHRgtCy0LjQtSDQsdC+0YLQsA==","description" => "Приветствие","description_us" => "Greeting"],
             ["id" => "3","name" => "main_menu","text" => "0JPQu9Cw0LLQvdC+0LUg0LzQtdC90Y4=","description" => "Главное меню","description_us" => "Main menu"],

@@ -7,7 +7,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 class SettingsButtons extends Model {
-    public $table = 'settings_buttons';
+    public $table = 'settings_buttons_ru';
     public $timestamps = false;
     protected $fillable = [
         'name',
