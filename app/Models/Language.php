@@ -13,4 +13,12 @@ class Language extends Model {
         'code',
         'emoji'
     ];
+
+    public function bestVideos() {
+        return $this->hasMany(BestVideo::class, 'languages_id');
+    }
+
+    public function bestPhotos() {
+        return $this->hasMany(BestPhoto::class, 'languages_id');
+    }
 }

@@ -15,6 +15,7 @@ use App\Models\ContactsModel;
 use App\Models\ContactsType;
 use App\Models\Language;
 use App\Services\Contracts\BotService;
+use Illuminate\Support\Facades\Log;
 
 trait RequestHandlerTrait {
     private $messenger;

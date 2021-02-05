@@ -27,8 +27,13 @@ class BotUsers extends Model {
         'language'
     ];
 
-    public function chats() {
-        return $this->hasMany(Chat::class, 'users_id');
+    public function videos() {
+        return $this->hasMany(PostVideo::class, 'users_id');
     }
+
+    public function photos() {
+        return $this->hasMany(PostPhoto::class, 'users_id');
+    }
+
 
 }
