@@ -11,6 +11,7 @@
     use App\Models\API\FacebookMessenger;
     use App\Models\BotUsers;
     use App\Models\Interaction;
+    use App\Models\Language;
     use App\Models\RefSystem;
     use App\Models\Visit;
     use Exception;
@@ -260,9 +261,10 @@
 
         private function valueSubstitution($str, $type, $n = []) {
             $user = BotUsers::find($this->getUserId());
-            if($user->language != '0') {
-                if(file_exists(public_path()."/json/".$type."_".$user->language.".json")) {
-                    $type = $type."_".$user->language;
+            if($user->languages_id != '0') {
+                $language = Language::find($user->languages_id);
+                if(file_exists(public_path()."/json/".$type."_".$language->code.".json")) {
+                    $type = $type."_".$language->code;
                 }
             }
             if(preg_match_all('/{([^}]*)}/', $str, $matches)) {

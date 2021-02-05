@@ -21,4 +21,8 @@ class Language extends Model {
     public function bestPhotos() {
         return $this->hasMany(BestPhoto::class, 'languages_id');
     }
+
+    public function channel() {
+        return $this->hasOne(Channels::class, 'languages_id');
+    }
 }

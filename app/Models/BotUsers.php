@@ -24,7 +24,7 @@ class BotUsers extends Model {
         'start',
         'count_ref',
         'access_free',
-        'language'
+        'languages_id'
     ];
 
     public function videos() {
@@ -35,5 +35,7 @@ class BotUsers extends Model {
         return $this->hasMany(PostPhoto::class, 'users_id');
     }
 
-
+    public function language() {
+        return $this->belongsTo(Language::class, 'languages_id');
+    }
 }

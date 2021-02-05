@@ -366,7 +366,7 @@ trait Universal {
                     ],
                     'chat' => [
                         'id' => $request->callback_query->message->chat->id,
-                        'title' => $request->callback_query->message->chat->title,
+                        'title' => $request->callback_query->message->chat->title ?? null,
                         'type' => $request->callback_query->message->chat->type
                     ]
                 ];

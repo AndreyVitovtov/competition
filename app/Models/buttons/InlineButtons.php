@@ -32,12 +32,12 @@ class InlineButtons {
         $languages = [];
         $lang = Language::all()->toArray();
         foreach ($lang as $l) {
-            $languages[] = [
-                'text' => $l['name'],
-                'callback_data' => 'lang__' . $l['code']
-            ];
+            $languages[] = [[
+                'text' => base64_decode($l['emoji'])." ".$l['name'],
+                'callback_data' => 'selectLanguage__' . $l['id']
+            ]];
         }
-        return [$languages];
+        return $languages;
     }
 
     public static function like() {
@@ -45,6 +45,19 @@ class InlineButtons {
                 "text" => "{like}",
                 "callback_data" => "like__50"
             ]]];
+    }
+
+    public static function checkSubscription($name) {
+        return [
+            [[
+                "text" => 'channel '.$name,
+                "callback_data" => "123"
+            ]],
+            [[
+                "text" => "{subscribed}",
+                "callback_data" => "subscribed"
+            ]]
+        ];
     }
 
 

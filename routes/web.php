@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\Answers;
+use App\Http\Controllers\Admin\Channels;
 use App\Http\Controllers\Admin\Contacts;
 use App\Http\Controllers\Admin\Languages;
 use App\Http\Controllers\Admin\Mailing;
@@ -164,6 +165,11 @@ Route::group(['middleware' => 'auth', 'prefix'=>'admin'], function() {
             ->name('admin-paypal');
         Route::post('/paypal/save', [\App\Http\Controllers\Admin\Payment::class, 'paypalSave'])
             ->name('admin-paypal-save');
+    });
+
+    Route::group(['prefix' => 'channels', 'middleware' => 'access:channels'], function() {
+        Route::get('/', [Channels::class, 'index'])->name('channels-for-languages');
+        Route::POST('/save', [Channels::class, 'save'])->name('channels-save');
     });
 });
 

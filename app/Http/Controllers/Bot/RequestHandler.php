@@ -6,30 +6,90 @@ use App\Http\Controllers\Bot\Traits\RequestHandlerTrait;
 use App\Models\buttons\InlineButtons;
 use App\Models\buttons\Menu;
 use App\Models\buttons\RichMedia;
+use App\Models\Channels;
+use App\Models\Language;
 
 class RequestHandler extends BaseRequestHandler {
 
     use RequestHandlerTrait;
-    // TODO: bot commands
+
+    public function start() {
+        $this->send('{welcome}');
+        $res = $this->send('{select_language}:', InlineButtons::languages(), true);
+        $this->setInteraction('', [
+            'messageId' => $this->getIdSendMessage($res)
+        ]);
+    }
+
+    public function selectLanguage($id) {
+        $this->delMessage();
+        $user = $this->getUser();
+        $user->languages_id = $id;
+        $user->save();
+        $language = Language::find($id);
+        $this->send('{language_selected}', [], false, [], [
+            'lang' => mb_strtolower($language->name)
+        ]);
+        $this->checkSubscription();
+        $this->send('{main_menu}', Menu::main());
+    }
+
+    public function changeLanguage() {
+        $this->checkSubscription();
+        $res = $this->send('{select_language}', InlineButtons::languages(), true);
+        $this->setInteraction('', [
+            'messageId' => $this->getIdSendMessage($res)
+        ]);
+    }
 
     public function methodFromGroupAndChat() {
         $type = $this->getType();
-
+        $type = str_replace(' ', '', ucwords(str_replace('-', ' ', $type)));
         if(method_exists($this, $type)) {
             $this->$type();
         }
     }
 
-    public function new_chat_participant() {
+    public function activeCompetitions() {
+        $this->checkSubscription();
+        //TODO: Добавить проверку есть ли конкурсы
+        $this->send('{select_competition}', Menu::competitions());
+    }
+
+    public function subscribed() {
+        $this->checkSubscription();
+        $this->send('main_menu', Menu::main());
+    }
+
+    private function checkSubscription() {
+        $channel = $this->getUser()->language->channel;
+        if (!$this->getChatMember($this->getChat(), $channel->channel_id)) {
+            $this->send("Чтобы продолжить подпишитесь на канал",
+                InlineButtons::checkSubscription($channel->name), true
+            );
+           die;
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+    public function newChatParticipant() {
         dd($this->getDataByType());
     }
 
-    public function left_chat_participant() {
+    public function leftChatParticipant() {
         dd($this->send('Post', InlineButtons::like(), true));
 //        dd($this->getDataByType());
     }
 
-    public function callback_query() {
+    public function callbackQuery() {
 //        dd($this->getChatMember('709935151', '-1001461794802'));
         $this->answerCallbackQuery('text');
         dd($this->sendTo($this->getChat(), 'Post', InlineButtons::like(), true));

@@ -7,6 +7,7 @@ namespace App\Models\buttons;
  * @method static start()
  * @method static back()
  * @method static test()
+ * @method static competitions()
  */
 class Menu {
     public static function __callStatic($name, $arguments) {
