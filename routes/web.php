@@ -187,6 +187,15 @@ Route::group(['middleware' => 'auth', 'prefix'=>'admin'], function() {
             Route::post('/archive/delete', [Competitions::class, 'groupInvitationsArchiveDelete'])
                 ->name('group-invitations-archive-delete');
         });
+        Route::group(['prefix' => 'best/videos'], function() {
+            Route::get('/', [Competitions::class, 'bestVideos'])->name('best-videos');
+        });
+        Route::group(['prefix' => 'best/photos'], function() {
+            Route::get('/', [Competitions::class, 'bestPhotos'])->name('best-photos');
+        });
+        Route::group(['prefix' => 'others'], function() {
+            Route::get('/', [Competitions::class, 'others'])->name('others');
+        });
     });
 
 

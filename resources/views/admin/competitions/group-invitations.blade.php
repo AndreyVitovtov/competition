@@ -11,10 +11,11 @@
 @section("main")
     <style>
         textarea {
-            width: 100%;
+            width: calc(100% - 13px);
             border: solid 1px #d1d1d1;
             border-radius: 3px;
             height: 100px;
+            padding: 5px;
         }
     </style>
 

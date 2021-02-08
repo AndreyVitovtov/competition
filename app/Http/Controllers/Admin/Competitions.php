@@ -117,4 +117,28 @@ class Competitions extends Controller{
         ");
     }
 
+    public function bestVideos(Request $request) {
+        $request = $request->post();
+        return view('admin.competitions.best-videos', [
+            'lang' => ($request['lang'] ?? null),
+            'languages' => Language::all(),
+            'menuItem' => 'bestvideos'
+        ]);
+    }
+
+    public function bestPhotos(Request $request) {
+        $request = $request->post();
+        return view('admin.competitions.best-photos', [
+            'lang' => ($request['lang'] ?? null),
+            'languages' => Language::all(),
+            'menuItem' => 'bestphotos'
+        ]);
+    }
+
+    public function others() {
+        return view('admin.competitions.others', [
+            'menuItem' => 'others'
+        ]);
+    }
+
 }
