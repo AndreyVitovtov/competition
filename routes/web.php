@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\Answers;
 use App\Http\Controllers\Admin\Channels;
+use App\Http\Controllers\Admin\Competitions;
 use App\Http\Controllers\Admin\Contacts;
 use App\Http\Controllers\Admin\Languages;
 use App\Http\Controllers\Admin\Mailing;
@@ -169,8 +170,28 @@ Route::group(['middleware' => 'auth', 'prefix'=>'admin'], function() {
 
     Route::group(['prefix' => 'channels', 'middleware' => 'access:channels'], function() {
         Route::get('/', [Channels::class, 'index'])->name('channels-for-languages');
-        Route::POST('/save', [Channels::class, 'save'])->name('channels-save');
+        Route::post('/save', [Channels::class, 'save'])->name('channels-save');
     });
+
+    Route::group(['prefix' => 'competitions', 'middleware' => 'access:competitions'], function() {
+        Route::group(['prefix' => 'group/invitations'], function() {
+            Route::get('language/{language?}', [Competitions::class, 'groupInvitations'])->name('group-invitations');
+            Route::post('/save', [Competitions::class, 'groupInvitationsSave'])
+                ->name('group-invitations-save');
+            Route::post('/complete', [Competitions::class, 'groupInvitationsComplete'])
+                ->name('group-invitations-complete');
+            Route::get('/archive', [Competitions::class, 'groupInvitationsArchive'])
+                ->name('group-invitations-archive');
+            Route::get('/archive/details', [Competitions::class, 'groupInvitationsArchiveDetails'])
+                ->name('group-invitations-archive-details');
+            Route::post('/archive/delete', [Competitions::class, 'groupInvitationsArchiveDelete'])
+                ->name('group-invitations-archive-delete');
+        });
+    });
+
+
+
+
 });
 
 Route::group(['middleware' => 'auth', 'prefix'=>'developer'], function() {

@@ -17,12 +17,4 @@ class Invited extends Model {
     public function addToGroup() {
         return $this->belongsTo(AddToGroup::class, 'add_to_group_id');
     }
-
-    public function referrer() {
-        return $this->belongsTo(BotUsers::class, 'referrer');
-    }
-
-    public function referral() {
-        return $this->belongsTo(BotUsers::class, 'referral');
-    }
 }

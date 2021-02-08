@@ -15,9 +15,12 @@ class Channels extends Controller {
 
     public function save(Request $request) {
         $request = $request->post();
-        foreach($request['channels'] as $id => $channel) {
+        foreach($request['channelsId'] as $id => $channel) {
             \App\Models\Channels::where('id', $id)
-                ->update(['channel_id' => $channel]);
+                ->update([
+                    'channel_id' => $channel,
+                    'link' => $request['channelsLink'][$id]]
+                );
         }
 
         return redirect()->to(route('channels-for-languages'));

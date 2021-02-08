@@ -12,11 +12,17 @@ class AddToGroup extends Model {
         'id',
         'description',
         'group_id',
-        'group_name',
-        'languages_id'
+        'group_link',
+        'languages_id',
+        'date',
+        'time'
     ];
 
     public function language() {
         return $this->belongsTo(Language::class, 'languages_id');
+    }
+
+    public function invited() {
+        return $this->hasMany(Invited::class, 'add_to_group_id');
     }
 }

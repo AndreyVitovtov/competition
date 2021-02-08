@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Bot;
 
 use App\Http\Controllers\Bot\Traits\RequestHandlerTrait;
+use App\Models\AddToGroup;
 use App\Models\buttons\InlineButtons;
 use App\Models\buttons\Menu;
 use App\Models\buttons\RichMedia;
 use App\Models\Channels;
+use App\Models\Invited;
 use App\Models\Language;
 
 class RequestHandler extends BaseRequestHandler {
@@ -35,19 +37,10 @@ class RequestHandler extends BaseRequestHandler {
     }
 
     public function changeLanguage() {
-        $this->checkSubscription();
         $res = $this->send('{select_language}', InlineButtons::languages(), true);
         $this->setInteraction('', [
             'messageId' => $this->getIdSendMessage($res)
         ]);
-    }
-
-    public function methodFromGroupAndChat() {
-        $type = $this->getType();
-        $type = str_replace(' ', '', ucwords(str_replace('-', ' ', $type)));
-        if(method_exists($this, $type)) {
-            $this->$type();
-        }
     }
 
     public function activeCompetitions() {
@@ -57,18 +50,37 @@ class RequestHandler extends BaseRequestHandler {
     }
 
     public function subscribed() {
-        $this->checkSubscription();
+
         $this->send('main_menu', Menu::main());
     }
 
     private function checkSubscription() {
         $channel = $this->getUser()->language->channel;
+
         if (!$this->getChatMember($this->getChat(), $channel->channel_id)) {
             $this->send("Чтобы продолжить подпишитесь на канал",
-                InlineButtons::checkSubscription($channel->name), true
+                InlineButtons::checkSubscription($channel->link), true
             );
            die;
         }
+    }
+
+    public function mainMenu() {
+        $this->checkSubscription();
+        $this->send('{main_menu}', Menu::main());
+    }
+
+    public function groupInvitations() {
+        $addToGroup = AddToGroup::where('languages_id', $this->getUser()->languages_id)
+            ->where('active', '1')
+            ->first();
+        if(empty($addToGroup)) {
+            $this->send('{no_competition}', Menu::competitions());
+        }
+        else {
+            $this->send($addToGroup->description, InlineButtons::addToGroup($addToGroup->group_link), true);
+        }
+
     }
 
 
@@ -78,10 +90,32 @@ class RequestHandler extends BaseRequestHandler {
 
 
 
+    public function methodFromGroupAndChat() {
 
+        $type = $this->getType();
+        $type = lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $type))));
+        if(method_exists($this, $type)) {
+            $this->$type();
+        }
+    }
 
     public function newChatParticipant() {
-        dd($this->getDataByType());
+        $data = $this->getDataByType();
+        $addToGroup = AddToGroup::where('group_id', $data['chat']['id'])
+            ->where('active', '1')
+            ->first();
+        if(!empty($addToGroup)) {
+            if(Invited::where('referrer', $data['from']['id'])
+                ->where('referral', $data['whom']['id'])
+                ->where('add_to_group_id', $addToGroup->id)
+                ->exists()
+            ) return;
+            $invited = new Invited;
+            $invited->add_to_group_id = $addToGroup->id;
+            $invited->referrer = $data['from']['id'];
+            $invited->referral = $data['whom']['id'];
+            $invited->save();
+        }
     }
 
     public function leftChatParticipant() {

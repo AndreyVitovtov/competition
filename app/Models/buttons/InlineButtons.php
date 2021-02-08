@@ -47,17 +47,25 @@ class InlineButtons {
             ]]];
     }
 
-    public static function checkSubscription($name) {
+    public static function checkSubscription($link) {
         return [
             [[
-                "text" => 'channel '.$name,
-                "callback_data" => "123"
+                "text" => "Channel",
+                "url" => $link
+
             ]],
             [[
-                "text" => "{subscribed}",
-                "callback_data" => "subscribed"
+                "text" => '{subscribed}',
+                "callback_data" => "mainMenu"
             ]]
         ];
+    }
+
+    public static function addToGroup($group_link) {
+        return [[[
+                "text" => "{group}",
+                "url" => $group_link
+            ]]];
     }
 
 

@@ -17,8 +17,11 @@ class CreateAddToGroupTable extends Migration {
             $table->increments('id')->unsigned();
             $table->text('description');
             $table->string('group_id');
-            $table->string('group_name');
+            $table->string('group_link');
             $table->integer('languages_id')->unsigned();
+            $table->integer('active')->default(1);
+            $table->date('date');
+            $table->time('time');
 
             $table->index('languages_id');
 

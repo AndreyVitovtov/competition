@@ -48,8 +48,9 @@ class Languages extends Controller {
         }
 
         $channel = new \App\Models\Channels;
-        $channel->channel_id = '0';
+        $channel->channel_id = '-0000000000000';
         $channel->languages_id = $lang->id;
+        $channel->save();
 
         return redirect()->to(route('languages-list'));
     }

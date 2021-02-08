@@ -20,7 +20,18 @@
                 @foreach($channels as $channel)
                     <tr>
                         <td>{{ $channel->language->name }}</td>
-                        <td><input type="text" name="channels[{{ $channel->id }}]" value="{{ $channel->channel_id }}"></td>
+                        <td>
+                            <input type="text"
+                                   name="channelsId[{{ $channel->id }}]"
+                                   value="{{ $channel->channel_id }}"
+                                   placeholder="id">
+                            <br>
+                            <br>
+                            <input type="text"
+                                   name="channelsLink[{{ $channel->id }}]"
+                                   value="{{ $channel->link }}"
+                                   placeholder="@lang('pages.link')">
+                        </td>
                     </tr>
                 @endforeach
             </table>

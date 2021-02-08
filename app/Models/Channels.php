@@ -10,7 +10,7 @@ class Channels extends Model {
     public $timestamps = false;
     public $fillable = [
         'id',
-        'name',
+        'link',
         'channel_id',
         'languages_id'
     ];
