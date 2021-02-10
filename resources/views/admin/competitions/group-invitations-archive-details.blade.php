@@ -28,11 +28,17 @@
             </tr>
             <tr>
                 <td>@lang('pages.group_id')</td>
-                <td>{{ $competition->group_id }}</td>
+                <td>{{ $group_id }}</td>
             </tr>
             <tr>
                 <td>@lang('pages.link')</td>
-                <td>{{ $competition->group_link }}</td>
+                <td>
+                    <select id="select_group">
+                        @foreach($competition->groups as $group)
+                            <option value="{{ $group->id }}" @if($group->id == $groupId) selected @endif>{{ $group->group_link }}</option>
+                        @endforeach
+                    </select>
+                </td>
             </tr>
         </table>
         @if(!empty($res))
@@ -56,4 +62,12 @@
             </table>
         @endif
     </div>
+
+    <script>
+        $('body').on('change', '#select_group', function() {
+            let url = window.location.href;
+            url = url.split('&group')[0]+'&group='+$(this).val();
+            $(location).attr('href', url);
+        });
+    </script>
 @endsection

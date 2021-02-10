@@ -90,11 +90,22 @@ class Competitions extends Controller{
 
     public function groupInvitationsArchiveDetails(Request $request) {
         $addToGroup = AddToGroup::find($request->post('id'));
+        if($request->post('group')) {
+            $groupId = $request->post('group');
+            $group_id = Groups::find($groupId)->group_id;
+        }
+        else {
+            $group = $addToGroup->groups->first();
+            $groupId = $group->id;
+            $group_id = $group->group_id;
+        }
         return view('admin.competitions.group-invitations-archive-details', [
             'menuItem' => 'groupinvitations',
             'competition' => $addToGroup,
             'language' => $addToGroup->language,
-            'res' => $this->countReferrals($request->post('id'))
+            'groupId' => $groupId,
+            'group_id' => $group_id,
+            'res' => $this->countReferrals($groupId)
         ]);
     }
 
