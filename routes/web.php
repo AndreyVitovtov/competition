@@ -175,7 +175,7 @@ Route::group(['middleware' => 'auth', 'prefix'=>'admin'], function() {
 
     Route::group(['prefix' => 'competitions', 'middleware' => 'access:competitions'], function() {
         Route::group(['prefix' => 'group/invitations'], function() {
-            Route::get('language/{language?}', [Competitions::class, 'groupInvitations'])->name('group-invitations');
+            Route::get('language/{language?}/{group?}', [Competitions::class, 'groupInvitations'])->name('group-invitations');
             Route::post('/save', [Competitions::class, 'groupInvitationsSave'])
                 ->name('group-invitations-save');
             Route::post('/complete', [Competitions::class, 'groupInvitationsComplete'])

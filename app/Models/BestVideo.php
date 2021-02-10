@@ -11,7 +11,8 @@ class BestVideo extends Model {
     public $fillable = [
         'id',
         'languages_id',
-        'description'
+        'description',
+        'active'
     ];
 
     public function language() {

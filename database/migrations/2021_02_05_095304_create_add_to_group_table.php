@@ -16,8 +16,6 @@ class CreateAddToGroupTable extends Migration {
             $table->engine = 'InnoDB';
             $table->increments('id')->unsigned();
             $table->text('description');
-            $table->string('group_id');
-            $table->string('group_link');
             $table->integer('languages_id')->unsigned();
             $table->integer('active')->default(1);
             $table->date('date');
@@ -39,6 +37,6 @@ class CreateAddToGroupTable extends Migration {
      */
     public function down()
     {
-        Schema::dropIfExists('add_to_group');
+//        Schema::dropIfExists('add_to_group');
     }
 }

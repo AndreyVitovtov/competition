@@ -9,12 +9,12 @@ class Invited extends Model {
     protected $table = 'invited';
     public $timestamps = false;
     public $fillable = [
-        'add_to_group_id',
+        'groups_id',
         'referrer',
         'referral'
     ];
 
-    public function addToGroup() {
+    public function group() {
         return $this->belongsTo(AddToGroup::class, 'add_to_group_id');
     }
 }

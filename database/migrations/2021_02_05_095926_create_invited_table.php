@@ -15,16 +15,8 @@ class CreateInvitedTable extends Migration
     {
         Schema::create('invited', function (Blueprint $table) {
             $table->engine = 'InnoDB';
-            $table->integer('add_to_group_id')->unsigned();
             $table->string('referrer');
             $table->string('referral');
-
-            $table->index('add_to_group_id');
-
-            $table->foreign('add_to_group_id')
-                ->references('id')->on('add_to_group')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
         });
     }
 

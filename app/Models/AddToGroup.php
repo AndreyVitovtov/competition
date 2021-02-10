@@ -11,9 +11,8 @@ class AddToGroup extends Model {
     public $fillable = [
         'id',
         'description',
-        'group_id',
-        'group_link',
         'languages_id',
+        'active',
         'date',
         'time'
     ];
@@ -22,7 +21,7 @@ class AddToGroup extends Model {
         return $this->belongsTo(Language::class, 'languages_id');
     }
 
-    public function invited() {
-        return $this->hasMany(Invited::class, 'add_to_group_id');
+    public function groups() {
+        return $this->hasMany(Groups::class, 'add_to_group_id');
     }
 }

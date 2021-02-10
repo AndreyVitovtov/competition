@@ -40,18 +40,29 @@
                 <input type="hidden" name="id" value="{{ $competition->id ?? null }}">
                 <div>
                     <label for="description">@lang('pages.description')</label>
-                    <textarea name="description" id="description">{{ $competition->description ?? "" }}</textarea>
+                    <textarea name="description" id="description" @if($competition) disabled @endif>{{ $competition->description ?? "" }}</textarea>
                 </div>
-                <div>
-                    <label for="group_id">@lang('pages.group_id')</label>
-                    <input type="text" name="group_id" value="{{ $competition->group_id ?? "" }}">
-                </div>
-                <div>
-                    <label for="group_link">@lang('pages.link')</label>
-                    <input type="text" name="group_link" value="{{ $competition->group_link ?? "" }}">
-                </div>
-                <br>
-                <input type="submit" value="@lang('pages.save')" class="button">
+                @foreach($competition->groups ?? [] as $group)
+                    <div>
+                        <div>
+                            <label for="group_id">@lang('pages.group_id')</label>
+                            <input type="text" name="group_id[]" value="{{ $group->group_id ?? "" }}" @if($competition) disabled @endif>
+                        </div>
+                        <div>
+                            <label for="group_link">@lang('pages.link')</label>
+                            <input type="text" name="group_link[]" value="{{ $group->group_link ?? "" }}" @if($competition) disabled @endif>
+                        </div>
+                    </div>
+                    <br>
+                @endforeach
+                <div id="add-group"></div>
+
+                @if(!$competition)
+                    <div id="button-add-group" class="button">@lang('pages.add_group')</div>
+                    <br>
+                    <br>
+                    <input type="submit" value="@lang('pages.save')" class="button">
+                @endif
                 @if($competition)
                     <button form="competition-complete" class="button">@lang('pages.complete')</button>
                 @endif
@@ -67,7 +78,21 @@
                 </form>
             @endif
         @endif
+        @if($lang && $competition)
+        <br>
+        <hr>
+        <br>
+        <label for="">@lang('pages.select_group')</label>
+        <select name="group" id="select-group">
+            @foreach($groups as $group)
+                <option value="{{ $group->id }}"
+                        @if($groupId == $group->id) selected @endif
+                >{{ $group->group_link }}</option>
+            @endforeach
+        </select>
+        @endif
         @if(!empty($res))
+            <br>
             <br>
             <table>
                 <tr>
@@ -87,4 +112,25 @@
             </table>
         @endif
     </div>
+
+    <script>
+        $('body').on('click', '#button-add-group', function() {
+            $('#add-group').append('<div>'+
+            '<div>'+
+            '<label for="group_id">@lang('pages.group_id')</label>'+
+                '<input type="text" name="group_id[]">'+
+                '</div>'+
+                '<div>'+
+                '<label for="group_link">@lang('pages.link')</label>'+
+                '<input type="text" name="group_link[]">'+
+                '</div>'+
+                '</div><br>');
+        });
+
+        $('body').on('change', '#select-group', function () {
+            let url = window.location.href;
+            url = url.split('&group')[0]+'&group='+$(this).val();
+            $(location).attr('href', url);
+        });
+    </script>
 @endsection

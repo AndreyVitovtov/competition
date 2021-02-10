@@ -34,7 +34,6 @@
         </form>
     @if($lang != null)
             <br>
-            <br>
         <form action="" method="POST">
             <label for="description">@lang('pages.description')</label>
             <textarea name="description"></textarea>

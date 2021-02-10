@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\AddToGroup;
+use App\Models\BestVideo;
+use App\Models\Groups;
 use App\Models\Invited;
 use App\Models\Language;
 use Illuminate\Http\Request;
@@ -11,19 +13,28 @@ use Illuminate\Support\Facades\DB;
 
 
 class Competitions extends Controller{
-    public function groupInvitations(Request $request, $language = null) {
+    public function groupInvitations(Request $request) {
+        $group = $request->get('group') ?? null;
         $request = $request->post();
-        $addToGroup = AddToGroup::with('invited')
-            ->where('languages_id', ($request['language'] ?? $language))
-            ->where('active', '1')
-            ->first();
-        $res = $this->countReferrals(($addToGroup->id ?? null));
+        $addToGroup = AddToGroup::with('groups')->where('languages_id', ($request['language'] ?? null))
+            ->where('active', '1')->get()->first();
+
+        if($request['language'] ?? null) {
+            $groups = $addToGroup->groups ?? null;
+            if($group) {
+                $groupId = $request['group'];
+            }
+
+            $res = $this->countReferrals($groupId ?? null) ?? [];
+        }
 
         return view('admin.competitions.group-invitations', [
             'languages' => Language::all(),
-            'lang' => $request['language'] ?? $language,
+            'lang' => $request['language'] ?? null,
             'competition' => $addToGroup,
-            'res' => $res,
+            'res' => $res ?? [],
+            'groups' => $groups ?? [],
+            'groupId' => $groupId ?? null,
             'menuItem' => 'groupinvitations'
         ]);
     }
@@ -45,9 +56,15 @@ class Competitions extends Controller{
             $addToGroup->time = date('H:i:s');
         }
         $addToGroup->description = $request['description'];
-        $addToGroup->group_id = $request['group_id'];
-        $addToGroup->group_link = $request['group_link'];
         $addToGroup->save();
+
+        foreach($request['group_id'] as $key => $id) {
+            $group = new Groups();
+            $group->group_id = $id;
+            $group->group_link = $request['group_link'][$key];
+            $group->add_to_group_id = $addToGroup->id;
+            $group->save();
+        }
 
         return redirect()->to(route('group-invitations', $addToGroup->languages_id));
     }
@@ -61,9 +78,8 @@ class Competitions extends Controller{
     }
 
     public function groupInvitationsArchive(Request $request) {
-
         return view('admin.competitions.group-invitations-archive', [
-            'competitions' => AddToGroup::where('active', 0)
+            'competitions' => AddToGroup::with('groups')->where('active', 0)
                 ->where('languages_id', $request->post('language'))
                 ->orderBy('id', 'DESC')
                 ->get(),
@@ -83,14 +99,13 @@ class Competitions extends Controller{
     }
 
     public function groupInvitationsArchiveDelete(Request $request) {
-        Invited::where('add_to_group_id', $request->post('id'))->delete();
         $AddToGroup = AddToGroup::find($request->post('id'));
         $AddToGroup->delete();
         $lang = $AddToGroup->languages_id;
         return redirect()->to(route('group-invitations-archive', ['language' => $lang]));
     }
 
-    private function countReferrals($id, $count = 10) {
+    private function countReferrals($groupId, $count = 10) {
         return DB::select("
             SELECT
                 u.id AS id,
@@ -105,22 +120,24 @@ class Competitions extends Controller{
                     COUNT(i2.referral) AS count
                 FROM invited i1
                 LEFT JOIN invited i2 ON i1.referral = i2.referrer
-                WHERE i1.add_to_group_id = '".$id."'
-                AND i2.add_to_group_id = '".$id."'
+                WHERE i1.groups_id = '".$groupId."'
+                AND i2.groups_id = '".$groupId."'
                 GROUP BY i2.referrer
             ) ref2 ON i.referral = ref2.referral
             JOIN users u on i.referrer = u.chat
-            WHERE i.add_to_group_id = '".$id."'
+            WHERE i.groups_id = '".$groupId."'
             GROUP BY i.referrer
             ORDER BY countRef1 DESC, countRef2 DESC
             LIMIT ".$count."
         ");
     }
 
-    public function bestVideos(Request $request) {
+    public function bestVideos(Request $request, $language = null) {
         $request = $request->post();
         return view('admin.competitions.best-videos', [
-            'lang' => ($request['lang'] ?? null),
+            'lang' => ($request['language'] ?? $language),
+            'competitions' => BestVideo::where('languages_id', ($request['language'] ?? $language))
+                ->first(),
             'languages' => Language::all(),
             'menuItem' => 'bestvideos'
         ]);

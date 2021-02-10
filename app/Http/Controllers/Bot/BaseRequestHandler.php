@@ -67,9 +67,8 @@
                 return;
             }
             $nameCommand = $this->getMethodName();
-            if($nameCommand == null) return;
+//            if($nameCommand == null) return;
             if(substr($nameCommand, 0, 4) == "http") return;
-
             if(method_exists($this, $nameCommand)) {
                 try {
                     $this->$nameCommand();
@@ -261,11 +260,9 @@
 
         private function valueSubstitution($str, $type, $n = []) {
             $user = BotUsers::find($this->getUserId());
-            if($user->languages_id != '0') {
-                $language = Language::find($user->languages_id);
-                if(file_exists(public_path()."/json/".$type."_".$language->code.".json")) {
-                    $type = $type."_".$language->code;
-                }
+            $language = Language::find($user->languages_id);
+            if(file_exists(public_path()."/json/".$type."_".($language->code ?? 'ru').".json")) {
+                $type = $type."_".($language->code ?? 'ru');
             }
             if(preg_match_all('/{([^}]*)}/', $str, $matches)) {
                 $textName = file_get_contents(public_path("json/{$type}.json"));
@@ -432,5 +429,22 @@
                 return true;
             }
             return false;
+        }
+
+        public function getMessageId() {
+            return $this->getDataByType()['message_id'] ?? null;
+        }
+
+        public function forwardMessage($whomChat, $fromChat = null, $messageId = null) {
+            if((MESSENGER ?? null) == 'Telegram') {
+                return $this->getBot()->forwardMessage(
+                    $whomChat,
+                    $fromChat ?? $this->getChat(),
+                    $messageId ?? $this->getMessageId()
+                );
+            }
+            else {
+                return 'In developing';
+            }
         }
     }

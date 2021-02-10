@@ -18,6 +18,7 @@ class CreateBestVideosTable extends Migration
             $table->increments('id')->unsigned();
             $table->integer('languages_id')->unsigned();
             $table->text('description');
+            $table->integer('active')->default(1);
 
             $table->foreign('languages_id')
                 ->references('id')->on('languages')

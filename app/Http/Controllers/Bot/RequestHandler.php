@@ -83,6 +83,16 @@ class RequestHandler extends BaseRequestHandler {
 
     }
 
+    public function bestVideo() {
+        $this->setInteraction('sendVideo');
+        $this->send('{send_video}', Menu::back());
+    }
+
+    public function sendVideo() {
+        $this->forwardMessage('303688172');
+        dd($this->getFilePath(true));
+    }
+
 
 
 
