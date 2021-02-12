@@ -29,6 +29,11 @@
         use Universal;
 
         public function getType() {
+            if((MESSENGER ?? null) == 'Telegram' && $this->type == 'document') {
+                if(preg_match('/("mime_type":"video)/m', $this->getRequest())) {
+                    return 'video';
+                }
+            }
             return $this->type;
         }
 
@@ -348,8 +353,9 @@
 
         }
 
-        public function answerCallbackQuery($text) {
+        public function answerCallbackQuery($text, $n = []) {
             $callbackQueryId = $this->getCallbackQueryId();
+            $text = $this->valueSubstitution($text, "pages", $n);
             return $this->bot->answerCallbackQuery($callbackQueryId, $text);
         }
 

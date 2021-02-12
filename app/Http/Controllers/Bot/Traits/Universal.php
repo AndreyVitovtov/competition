@@ -383,9 +383,9 @@ trait Universal {
                     'data' => $request->callback_query->data,
                     'from' => [
                         'id' => $request->callback_query->from->id,
-                        'first_name' => $request->callback_query->from->first_name,
-                        'last_name' => $request->callback_query->from->last_name,
-                        'username' => $request->callback_query->from->username
+                        'first_name' => $request->callback_query->from->first_name ?? null,
+                        'last_name' => $request->callback_query->from->last_name ?? null,
+                        'username' => $request->callback_query->from->username ?? null
                     ],
                     'chat' => [
                         'id' => $request->callback_query->message->chat->id,
@@ -529,7 +529,7 @@ trait Universal {
         }
 
         if($path == null) {
-            if(copy($filePath, public_path()."/img/".$name)) return $name;
+            if(copy($filePath, public_path()."/video/".$name)) return $name;
         }
         else {
             if(copy($filePath, $path.$name)) return $name;

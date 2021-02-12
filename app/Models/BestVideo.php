@@ -12,6 +12,7 @@ class BestVideo extends Model {
         'id',
         'languages_id',
         'description',
+        'channel_id',
         'active'
     ];
 

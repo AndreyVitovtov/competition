@@ -4,12 +4,16 @@ namespace App\Http\Controllers\Bot;
 
 use App\Http\Controllers\Bot\Traits\RequestHandlerTrait;
 use App\Models\AddToGroup;
+use App\Models\BestVideo;
 use App\Models\buttons\InlineButtons;
 use App\Models\buttons\Menu;
 use App\Models\buttons\RichMedia;
 use App\Models\Channels;
+use App\Models\Groups;
 use App\Models\Invited;
 use App\Models\Language;
+use App\Models\LikesVideo;
+use App\Models\PostVideo;
 
 class RequestHandler extends BaseRequestHandler {
 
@@ -89,8 +93,44 @@ class RequestHandler extends BaseRequestHandler {
     }
 
     public function sendVideo() {
-        $this->forwardMessage('303688172');
-        dd($this->getFilePath(true));
+        if($bestVideo = $this->getCompetitionBestVideo()) {
+            if($this->getType() == 'video') {
+                if(($video = $this->saveFile()) !== null) {
+                    $this->setInteraction('bestVideoSendText', [
+                        'video' => $video,
+                        'best_videos_id' => $bestVideo->id
+                    ]);
+                    $this->send('{send_text}', Menu::back());
+                }
+                else {
+                    $this->send('{error}');
+                }
+            }
+        }
+        else {
+            $this->send('{no_competition}');
+        }
+    }
+
+    public function bestVideoSendText($params) {
+        if($this->getType() == 'text') {
+            $postVideo = new PostVideo();
+            $postVideo->best_videos_id = $params['best_videos_id'];
+            $postVideo->users_id = $this->getUserId();
+            $postVideo->video = $params['video'];
+            $postVideo->text = $this->getMessage();
+            $postVideo->save();
+
+            $this->send('{video_sent_for_moderation}', Menu::main());
+        }
+        else {
+            $this->send('{send_text}');
+        }
+    }
+
+    public function getCompetitionBestVideo() {
+        return BestVideo::where('active', '1')
+            ->first();
     }
 
 
@@ -111,17 +151,15 @@ class RequestHandler extends BaseRequestHandler {
 
     public function newChatParticipant() {
         $data = $this->getDataByType();
-        $addToGroup = AddToGroup::where('group_id', $data['chat']['id'])
-            ->where('active', '1')
-            ->first();
-        if(!empty($addToGroup)) {
+        $group = Groups::where('group_id', $data['chat']['id'])->first();
+        if($group->addToGroup->active == 1) {
             if(Invited::where('referrer', $data['from']['id'])
                 ->where('referral', $data['whom']['id'])
-                ->where('add_to_group_id', $addToGroup->id)
+                ->where('groups_id', $group->id)
                 ->exists()
             ) return;
             $invited = new Invited;
-            $invited->add_to_group_id = $addToGroup->id;
+            $invited->groups_id = $group->id;
             $invited->referrer = $data['from']['id'];
             $invited->referral = $data['whom']['id'];
             $invited->save();
@@ -134,13 +172,27 @@ class RequestHandler extends BaseRequestHandler {
     }
 
     public function callbackQuery() {
-//        dd($this->getChatMember('709935151', '-1001461794802'));
-        $this->answerCallbackQuery('text');
-        dd($this->sendTo($this->getChat(), 'Post', InlineButtons::like(), true));
-        if(substr($this->getMessage(), 0, 4) == 'like') {
-            $postId = explode('__', $this->getMessage());
-            $type = $this->getDataByType();
-            dd($type['chat']['type']);
+        if(substr($this->getMessage(), 0, 13) == 'likeBestVideo') {
+            $arr = explode('__', $this->getMessage());
+            $bestVideoId = explode('_', $arr[1])[0];
+            $postId = explode('_', $arr[1])[1];
+
+            if(BestVideo::where('id', $bestVideoId)->where('active', '0')->exists()) {
+                $this->answerCallbackQuery('{competition_is_over}');
+            }
+            else {
+                $userChat = json_decode($this->getRequest())->callback_query->from->id;
+                if(LikesVideo::where('post_videos_id', $postId)->where('user_chat', $userChat)->exists()) {
+                    $this->answerCallbackQuery('{you_have_already_rated_this_post}');
+                }
+                else {
+                    $likeVideo = new LikesVideo();
+                    $likeVideo->post_videos_id = $postId;
+                    $likeVideo->user_chat = $userChat;
+                    $likeVideo->save();
+                    $this->answerCallbackQuery('{thank_you_for_rating}');
+                }
+            }
         }
     }
 }

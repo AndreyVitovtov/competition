@@ -9,8 +9,8 @@ class LikesVideo extends Model {
     protected $table = 'likes_videos';
     public $timestamps = false;
     public $fillable = [
-        'posts_videos_id',
-        'users_id'
+        'post_videos_id',
+        'user_chat'
     ];
 
     public function post() {

@@ -16,18 +16,12 @@ class CreateLikesVideosTable extends Migration
         Schema::create('likes_videos', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->integer('post_videos_id')->unsigned();
-            $table->integer('users_id')->unsigned();
+            $table->integer('user_chat')->unsigned();
 
             $table->index('post_videos_id');
-            $table->index('users_id');
 
             $table->foreign('post_videos_id')
                 ->references('id')->on('post_videos')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
-
-            $table->foreign('users_id')
-                ->references('id')->on('users')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
         });

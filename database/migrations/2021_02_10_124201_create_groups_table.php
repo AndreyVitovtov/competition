@@ -15,8 +15,8 @@ class CreateGroupsTable extends Migration
     {
         Schema::create('groups', function (Blueprint $table) {
             $table->increments('id')->unsigned();
-            $table->string('group_id');
-            $table->string('group_link');
+            $table->string('group_id')->unique();
+            $table->string('group_link')->unique();
             $table->integer('add_to_group_id')->unsigned();
 
             $table->index('add_to_group_id');
@@ -47,3 +47,4 @@ class CreateGroupsTable extends Migration
 //        Schema::dropIfExists('groups');
     }
 }
+//Консультации

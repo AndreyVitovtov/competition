@@ -16,11 +16,12 @@ class CreatePostVideosTable extends Migration
         Schema::create('post_videos', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id')->unsigned();
-            $table->string('channel_id')->nullable();
             $table->string('post_id')->nullable();
             $table->integer('count_likes')->default(0);
             $table->integer('users_id')->unsigned();
             $table->integer('best_videos_id')->unsigned();
+            $table->string('video');
+            $table->text('text');
 
             $table->index('users_id');
             $table->index('best_videos_id');

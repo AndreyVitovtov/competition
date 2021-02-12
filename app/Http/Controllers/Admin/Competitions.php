@@ -8,6 +8,7 @@ use App\Models\BestVideo;
 use App\Models\Groups;
 use App\Models\Invited;
 use App\Models\Language;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -46,24 +47,31 @@ class Competitions extends Controller{
             return redirect()->to(route('group-invitations', $request['language']));
         }
 
-        if(isset($request['id']) && $request['id'] != null) {
-            $addToGroup = AddToGroup::find($request['id']);
-        }
-        else {
-            $addToGroup = new AddToGroup();
-            $addToGroup->languages_id = $request['language'];
-            $addToGroup->date = date('Y-m-d');
-            $addToGroup->time = date('H:i:s');
-        }
-        $addToGroup->description = $request['description'];
-        $addToGroup->save();
+        DB::beginTransaction();
+        try {
+            if(isset($request['id']) && $request['id'] != null) {
+                $addToGroup = AddToGroup::find($request['id']);
+            }
+            else {
+                $addToGroup = new AddToGroup();
+                $addToGroup->languages_id = $request['language'];
+                $addToGroup->date = date('Y-m-d');
+                $addToGroup->time = date('H:i:s');
+            }
+            $addToGroup->description = $request['description'];
+            $addToGroup->save();
 
-        foreach($request['group_id'] as $key => $id) {
-            $group = new Groups();
-            $group->group_id = $id;
-            $group->group_link = $request['group_link'][$key];
-            $group->add_to_group_id = $addToGroup->id;
-            $group->save();
+            foreach($request['group_id'] as $key => $id) {
+                $group = new Groups();
+                $group->group_id = $id;
+                $group->group_link = $request['group_link'][$key];
+                $group->add_to_group_id = $addToGroup->id;
+                $group->save();
+            }
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
         }
 
         return redirect()->to(route('group-invitations', $addToGroup->languages_id));
@@ -145,14 +153,60 @@ class Competitions extends Controller{
 
     public function bestVideos(Request $request, $language = null) {
         $request = $request->post();
+
+        $competition = BestVideo::where('languages_id', ($request['language'] ?? $language))
+            ->where('active', '1')
+            ->first();
+
+        if($competition) {
+            $res = $this->countLikesVideos($competition->id ?? null);
+        }
+
         return view('admin.competitions.best-videos', [
             'lang' => ($request['language'] ?? $language),
-            'competitions' => BestVideo::where('languages_id', ($request['language'] ?? $language))
-                ->first(),
+            'competition' => $competition,
             'languages' => Language::all(),
+            'res' => $res ?? null,
             'menuItem' => 'bestvideos'
         ]);
     }
+
+    public function bestVideosSave(Request $request) {
+        if(empty($request->post('description')) || empty($request->post('channel_id'))) {
+            return redirect()->to(route('best-videos')."?language=".$request->post('languages_id'));
+        }
+
+
+        $bestVideo = new BestVideo();
+        $bestVideo->description = $request->post('description');
+        $bestVideo->languages_id = $request->post('languages_id');
+        $bestVideo->save();
+
+        return redirect()->to(route('best-videos')."?language=".$request->post('languages_id'));
+    }
+
+    public function countLikesVideos($bestVideosId) {
+        return DB::select("
+            SELECT pv.users_id AS userId,
+                   u.username,
+                   CONCAT('https://t.me/', bv.channel_name,'/', pv.post_id) AS post,
+                   COUNT(lv.user_chat) AS count
+            FROM post_videos pv
+            JOIN likes_videos lv on pv.id = lv.post_videos_id
+            JOIN users u on lv.user_chat = u.chat
+            JOIN best_videos bv on pv.best_videos_id = bv.id
+            WHERE pv.best_videos_id = '".$bestVideosId."'
+            GROUP BY pv.id
+            ORDER BY count DESC"
+        );
+    }
+
+
+
+
+
+
+
 
     public function bestPhotos(Request $request) {
         $request = $request->post();

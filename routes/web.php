@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\Competitions;
 use App\Http\Controllers\Admin\Contacts;
 use App\Http\Controllers\Admin\Languages;
 use App\Http\Controllers\Admin\Mailing;
+use App\Http\Controllers\Admin\ModerationOfCompetitions;
 use App\Http\Controllers\Admin\Moderators;
 use App\Http\Controllers\Admin\Settings;
 use App\Http\Controllers\Admin\Statistics;
@@ -189,6 +190,7 @@ Route::group(['middleware' => 'auth', 'prefix'=>'admin'], function() {
         });
         Route::group(['prefix' => 'best/videos'], function() {
             Route::get('/', [Competitions::class, 'bestVideos'])->name('best-videos');
+            Route::post('best/videos/save', [Competitions::class, 'bestVideosSave'])->name('best-videos-save');
         });
         Route::group(['prefix' => 'best/photos'], function() {
             Route::get('/', [Competitions::class, 'bestPhotos'])->name('best-photos');
@@ -196,6 +198,14 @@ Route::group(['middleware' => 'auth', 'prefix'=>'admin'], function() {
         Route::group(['prefix' => 'others'], function() {
             Route::get('/', [Competitions::class, 'others'])->name('others');
         });
+    });
+
+    Route::group(['prefix' => 'moderation-of-competitions', 'middleware' => 'access:moderation_of_competitions'], function () {
+        Route::get('photo', [ModerationOfCompetitions::class, 'photo'])->name('moderation-of-competitions-photo');
+        Route::get('video', [ModerationOfCompetitions::class, 'video'])->name('moderation-of-competitions-video');
+        Route::get('video/play/{id}', [ModerationOfCompetitions::class, 'videoPlay'])->name('moderation-of-competitions-video-play');
+        Route::post('video/delete', [ModerationOfCompetitions::class, 'videoDelete'])->name('moderation-of-competitions-video-delete');
+        Route::post('video/active', [ModerationOfCompetitions::class, 'videoActive'])->name('moderation-of-competitions-video-active');
     });
 
 
