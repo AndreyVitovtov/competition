@@ -12,9 +12,8 @@
     <link rel="stylesheet" href="{{asset('css/statistics.css')}}">
 
     @foreach($statistics as $key => $value)
-        <div class="chart_statistics_2">
-            <div id="chart_{{ $key }}"></div>
-        </div>
+        <div class="chart_statistics_2" id="chart_languages"></div>
+        <div class="chart_statistics_2"  id="chart_visits"></div>
     @endforeach
 
     <script>
@@ -23,19 +22,25 @@
             statistics['{{ $key }}'] = {!! json_encode($value) !!}
         @endforeach
 
-    //Messengers
-        chart.options.title = "@lang('pages.statistics_count_users_messengers')";
-        chart.data = [
-            ['', 'Telegram', 'Viber'],
-            ["@lang('pages.statistics_users_count')", statistics.messengers.Telegram, statistics.messengers.Viber]
-        ];
-        chart.drawBar('chart_messengers');
+    {{--//Messengers--}}
+    {{--    chart.options.title = "@lang('pages.statistics_count_users_messengers')";--}}
+    {{--    chart.data = [--}}
+    {{--        ['', 'Telegram', 'Viber'],--}}
+    {{--        ["@lang('pages.statistics_users_count')", statistics.messengers.Telegram, statistics.messengers.Viber]--}}
+    {{--    ];--}}
+    {{--    chart.drawBar('chart_messengers');--}}
 
     //Countries
-        statistics.countries.unshift(['Country', 'Count']);
-        chart.options.title = "@lang('pages.statistics_count_users')";
-        chart.data = statistics.countries;
-        chart.drawPie('chart_countries');
+    {{--    statistics.countries.unshift(['Country', 'Count']);--}}
+    {{--    chart.options.title = "@lang('pages.statistics_count_users')";--}}
+    {{--    chart.data = statistics.countries;--}}
+    {{--    chart.drawPie('chart_countries');--}}
+
+    //Languages
+        statistics.resLang.unshift(['Language', 'Count']);
+        chart.options.title = "@lang('pages.statistics_count_users_languages')";
+        chart.data = statistics.resLang;
+        chart.drawPie('chart_languages');
 
     //Visits
         statistics.visits.unshift(['Date', "@lang('pages.statistics_count')"]);

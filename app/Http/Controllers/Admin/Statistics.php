@@ -60,6 +60,26 @@ class Statistics extends Controller {
             ];
         }
 
+        //Статистика по языкам
+        $languages = DB::select("
+            SELECT l.name,
+                   COUNT(u.id) AS count
+            FROM users u
+            JOIN languages l on u.languages_id = l.id
+            GROUP BY l.name
+        ");
+        $resLang = [];
+        foreach($languages as $language) {
+            $resLang[] = [
+                $language->name, $language->count
+            ];
+        }
+        if(empty($resLang)) {
+            $resLang[] = [
+                'no users from languages', 1
+            ];
+        }
+
         //Статистика по мессенджерам
         $messenger = DB::select("SELECT messenger, COUNT(*) as count FROM users GROUP BY messenger");
         $messengers = [];
@@ -96,6 +116,7 @@ class Statistics extends Controller {
         $statistics->messengers = $messengers;
         $statistics->visits = $visits;
         $statistics->access = $access;
+        $statistics->resLang = $resLang;
 
         $view->statistics = $statistics;
 

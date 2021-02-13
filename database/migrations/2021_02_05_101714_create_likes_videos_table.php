@@ -21,7 +21,7 @@ class CreateLikesVideosTable extends Migration
             $table->index('post_videos_id');
 
             $table->foreign('post_videos_id')
-                ->references('id')->on('post_videos')
+                ->references('id')->on('posts_videos')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
         });

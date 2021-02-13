@@ -41,6 +41,8 @@ class Mailing {
             $db = $db->where('country', $task->country);
         }
 
+        $db = $db->where('languages_id', $task->language);
+
         //TODO: Mailing parameters
 
         $users = $db->limit($this->countUsers)
@@ -62,7 +64,9 @@ class Mailing {
             if(isset($task->img)) {
                 $imgArr = explode("/", $task->img);
                 $imgName = end($imgArr);
-                unlink(public_path('/img/mailing/'.$imgName));
+                if(file_exists(public_path('/img/mailing/'.$imgName))) {
+                    unlink(public_path('/img/mailing/'.$imgName));
+                }
             }
             return json_encode([
                 'status' => 'fail',
@@ -79,7 +83,7 @@ class Mailing {
             foreach($uc as $user) {
                 if($task->type == "text") {
                     if($user->messenger == "Telegram") {
-                        $menu = Menu::main('Telegram');
+                        $menu = Menu::main(['messenger' => 'Telegram']);
                         $menu = $this->valueSubstitutionArray($menu);
 
                         $data[] = [
@@ -102,7 +106,7 @@ class Mailing {
                         ];
                     }
                     elseif($user->messenger == "Viber") {
-                        $menu = Menu::main('Viber');
+                        $menu = Menu::main(['messenger' => 'Viber']);
                         $menu = $this->valueSubstitutionArray($menu);
 
                         $data[] = [
@@ -141,7 +145,7 @@ class Mailing {
                 }
                 elseif($task->type == "img") {
                     if($user->messenger == "Telegram") {
-                        $menu = Menu::main('Viber');
+                        $menu = Menu::main(['messenger' => 'Telegram']);
                         $menu = $this->valueSubstitutionArray($menu);
 
                         $data[] = [
@@ -164,7 +168,7 @@ class Mailing {
                         ];
                     }
                     elseif($user->messenger == "Viber") {
-                        $menu = Menu::main('Viber');
+                        $menu = Menu::main(['messenger' => 'Viber']);
                         $menu = $this->valueSubstitutionArray($menu);
 
                         $data[] = [

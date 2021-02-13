@@ -191,26 +191,36 @@ Route::group(['middleware' => 'auth', 'prefix'=>'admin'], function() {
         Route::group(['prefix' => 'best/videos'], function() {
             Route::get('/', [Competitions::class, 'bestVideos'])->name('best-videos');
             Route::post('best/videos/save', [Competitions::class, 'bestVideosSave'])->name('best-videos-save');
+            Route::post('best/videos/complete', [Competitions::class, 'bestVideosComplete'])->name('best-videos-complete');
+            Route::get('best/videos/archive', [Competitions::class, 'bestVideosArchive'])->name('best-videos-archive');
+            Route::post('best/videos/archive/delete', [Competitions::class, 'bestVideosArchiveDelete'])->name('best-videos-archive-delete');
+            Route::get('best/videos/archive/details', [Competitions::class, 'bestVideosArchiveDetails'])->name('best-videos-archive-details');
         });
         Route::group(['prefix' => 'best/photos'], function() {
             Route::get('/', [Competitions::class, 'bestPhotos'])->name('best-photos');
+            Route::post('best/photos/save', [Competitions::class, 'bestPhotosSave'])->name('best-photos-save');
+            Route::post('best/photos/complete', [Competitions::class, 'bestPhotosComplete'])->name('best-photos-complete');
+            Route::get('best/photos/archive', [Competitions::class, 'bestPhotosArchive'])->name('best-photos-archive');
+            Route::post('best/photos/archive/delete', [Competitions::class, 'bestPhotosArchiveDelete'])->name('best-photos-archive-delete');
+            Route::get('best/photos/archive/details', [Competitions::class, 'bestPhotosArchiveDetails'])->name('best-photos-archive-details');
         });
         Route::group(['prefix' => 'others'], function() {
             Route::get('/', [Competitions::class, 'others'])->name('others');
+            Route::post('/save', [Competitions::class, 'othersSave'])->name('others-save');
+            Route::post('/delete', [Competitions::class, 'othersDelete'])->name('others-delete');
         });
     });
 
     Route::group(['prefix' => 'moderation-of-competitions', 'middleware' => 'access:moderation_of_competitions'], function () {
-        Route::get('photo', [ModerationOfCompetitions::class, 'photo'])->name('moderation-of-competitions-photo');
         Route::get('video', [ModerationOfCompetitions::class, 'video'])->name('moderation-of-competitions-video');
         Route::get('video/play/{id}', [ModerationOfCompetitions::class, 'videoPlay'])->name('moderation-of-competitions-video-play');
         Route::post('video/delete', [ModerationOfCompetitions::class, 'videoDelete'])->name('moderation-of-competitions-video-delete');
-        Route::post('video/active', [ModerationOfCompetitions::class, 'videoActive'])->name('moderation-of-competitions-video-active');
+        Route::post('video/active', [ModerationOfCompetitions::class, 'videoActive'])->name('moderation-of-competitions-video-active');Route::get('video/play/{id}', [ModerationOfCompetitions::class, 'videoPlay'])->name('moderation-of-competitions-video-play');
+        Route::get('photo', [ModerationOfCompetitions::class, 'photo'])->name('moderation-of-competitions-photo');
+        Route::post('photo/delete', [ModerationOfCompetitions::class, 'photoDelete'])->name('moderation-of-competitions-photo-delete');
+        Route::post('photo/active', [ModerationOfCompetitions::class, 'photoActive'])->name('moderation-of-competitions-photo-active');
+        Route::get('photo/read/{id}', [ModerationOfCompetitions::class, 'photoRead'])->name('moderation-of-competitions-photo-read');
     });
-
-
-
-
 });
 
 Route::group(['middleware' => 'auth', 'prefix'=>'developer'], function() {

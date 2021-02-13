@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateBestPhotosTable extends Migration
+class CreateOthersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,14 @@ class CreateBestPhotosTable extends Migration
      */
     public function up()
     {
-        Schema::create('best_photos', function (Blueprint $table) {
-            $table->engine = 'InnoDB';
-            $table->increments('id')->unsigned();
-            $table->integer('languages_id')->unsigned();
+        Schema::create('others', function (Blueprint $table) {
+            $table->increments('id');
             $table->text('description');
-            $table->string('channel_id');
-            $table->string('channel_name');
-            $table->integer('active')->default(1);
             $table->date('date');
             $table->time('time');
+            $table->integer('languages_id')->unsigned();
+
+            $table->index('languages_id');
 
             $table->foreign('languages_id')
                 ->references('id')->on('languages')
@@ -38,6 +36,6 @@ class CreateBestPhotosTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('best_photos');
+        Schema::dropIfExists('others');
     }
 }

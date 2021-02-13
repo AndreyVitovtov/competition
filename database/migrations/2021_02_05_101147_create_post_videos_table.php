@@ -13,7 +13,7 @@ class CreatePostVideosTable extends Migration
      */
     public function up()
     {
-        Schema::create('post_videos', function (Blueprint $table) {
+        Schema::create('posts_videos', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id')->unsigned();
             $table->string('post_id')->nullable();
@@ -45,6 +45,6 @@ class CreatePostVideosTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('post_videos');
+        Schema::dropIfExists('posts_videos');
     }
 }

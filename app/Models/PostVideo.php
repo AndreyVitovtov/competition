@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class PostVideo extends Model {
-    protected $table = 'post_videos';
+    protected $table = 'posts_videos';
     public $timestamps = false;
     public $fillable = [
         'id',

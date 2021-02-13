@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\AddToGroup;
+use App\Models\BestPhoto;
 use App\Models\BestVideo;
 use App\Models\Groups;
 use App\Models\Invited;
 use App\Models\Language;
+use App\Models\Others;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -74,7 +76,7 @@ class Competitions extends Controller{
             DB::rollBack();
         }
 
-        return redirect()->to(route('group-invitations', $addToGroup->languages_id));
+        return redirect()->to(route('group-invitations').'?language='.$addToGroup->languages_id);
     }
 
     public function groupInvitationsComplete(Request $request) {
@@ -82,7 +84,7 @@ class Competitions extends Controller{
         $addToGroup->active = 0;
         $addToGroup->save();
 
-        return redirect()->to(route('group-invitations', $addToGroup->languages_id));
+        return redirect()->to(route('group-invitations').'?language='.$addToGroup->languages_id);
     }
 
     public function groupInvitationsArchive(Request $request) {
@@ -180,9 +182,44 @@ class Competitions extends Controller{
         $bestVideo = new BestVideo();
         $bestVideo->description = $request->post('description');
         $bestVideo->languages_id = $request->post('languages_id');
+        $bestVideo->channel_id = $request->post('channel_id');
+        $bestVideo->channel_name = $request->post('channel_name');
         $bestVideo->save();
 
         return redirect()->to(route('best-videos')."?language=".$request->post('languages_id'));
+    }
+
+    public function bestVideosComplete(Request $request) {
+        BestVideo::where('id', $request->post('best_videos_id'))->update(['active' => '0']);
+        return redirect()->to(route('best-videos')."?language=".$request->post('languages_id'));
+    }
+
+    public function bestVideosArchive(Request $request) {
+        return view('admin.competitions.best-videos-archive', [
+            'competitions' => BestVideo::where('active', '0')
+                ->where('languages_id', $request->post('language'))
+                ->orderBy('id', 'DESC')
+                ->get(),
+            'language' => Language::find($request->post('language')),
+            'menuItem' => 'bestvideos'
+        ]);
+    }
+
+    public function bestVideosArchiveDelete(Request $request) {
+        BestVideo::where('id', $request->post('id'))
+            ->where('active', '0')
+            ->delete();
+        return redirect()->to(route('best-videos-archive')."?language=".$request->post('language'));
+    }
+
+    public function bestVideosArchiveDetails(Request $request) {
+        $competition = BestVideo::find($request->post('id'));
+        return view('admin.competitions.best-videos-archive-details', [
+            'menuItem' => 'bestvideos',
+            'competition' => $competition,
+            'language' => Language::find($competition->languages_id),
+            'res' => $this->countLikesVideos($competition->id)
+        ]);
     }
 
     public function countLikesVideos($bestVideosId) {
@@ -191,7 +228,7 @@ class Competitions extends Controller{
                    u.username,
                    CONCAT('https://t.me/', bv.channel_name,'/', pv.post_id) AS post,
                    COUNT(lv.user_chat) AS count
-            FROM post_videos pv
+            FROM posts_videos pv
             JOIN likes_videos lv on pv.id = lv.post_videos_id
             JOIN users u on lv.user_chat = u.chat
             JOIN best_videos bv on pv.best_videos_id = bv.id
@@ -201,26 +238,125 @@ class Competitions extends Controller{
         );
     }
 
-
-
-
-
-
-
-
-    public function bestPhotos(Request $request) {
+    public function bestPhotos(Request $request, $language = null) {
         $request = $request->post();
+
+        $competition = BestPhoto::where('languages_id', ($request['language'] ?? $language))
+            ->where('active', '1')
+            ->first();
+
+        if($competition) {
+            $res = $this->countLikesPhotos($competition->id ?? null);
+        }
+
         return view('admin.competitions.best-photos', [
-            'lang' => ($request['lang'] ?? null),
+            'lang' => ($request['language'] ?? $language),
+            'competition' => $competition,
             'languages' => Language::all(),
+            'res' => $res ?? null,
             'menuItem' => 'bestphotos'
         ]);
     }
 
-    public function others() {
-        return view('admin.competitions.others', [
-            'menuItem' => 'others'
+    public function bestPhotosSave(Request $request) {
+        if(empty($request->post('description')) || empty($request->post('channel_id'))) {
+            return redirect()->to(route('best-photos')."?language=".$request->post('languages_id'));
+        }
+
+
+        $bestPhoto = new BestPhoto();
+        $bestPhoto->description = $request->post('description');
+        $bestPhoto->languages_id = $request->post('languages_id');
+        $bestPhoto->channel_id = $request->post('channel_id');
+        $bestPhoto->channel_name = $request->post('channel_name');
+        $bestPhoto->save();
+
+        return redirect()->to(route('best-photos')."?language=".$request->post('languages_id'));
+    }
+
+    public function bestPhotosComplete(Request $request) {
+        BestPhoto::where('id', $request->post('best_photos_id'))->update(['active' => '0']);
+        return redirect()->to(route('best-photos')."?language=".$request->post('languages_id'));
+    }
+
+    public function bestPhotosArchive(Request $request) {
+        return view('admin.competitions.best-photos-archive', [
+            'competitions' => BestPhoto::where('active', '0')
+                ->where('languages_id', $request->post('language'))
+                ->orderBy('id', 'DESC')
+                ->get(),
+            'language' => Language::find($request->post('language')),
+            'menuItem' => 'bestphotos'
         ]);
+    }
+
+    public function bestPhotosArchiveDelete(Request $request) {
+        BestPhoto::where('id', $request->post('id'))
+            ->where('active', '0')
+            ->delete();
+        return redirect()->to(route('best-photos-archive')."?language=".$request->post('language'));
+    }
+
+    public function bestPhotosArchiveDetails(Request $request) {
+        $competition = BestPhoto::find($request->post('id'));
+        return view('admin.competitions.best-photos-archive-details', [
+            'menuItem' => 'bestphotos',
+            'competition' => $competition,
+            'language' => Language::find($competition->languages_id),
+            'res' => $this->countLikesPhotos($competition->id)
+        ]);
+    }
+
+    public function countLikesPhotos($bestPhotosId) {
+        return DB::select("
+            SELECT pp.users_id AS userId,
+                   u.username,
+                   CONCAT('https://t.me/', bp.channel_name,'/', pp.post_id) AS post,
+                   COUNT(lp.user_chat) AS count
+            FROM posts_photos pp
+            JOIN likes_photos lp on pp.id = lp.posts_photos_id
+            JOIN users u on lp.user_chat = u.chat
+            JOIN best_photos bp on pp.best_photos_id = bp.id
+            WHERE pp.best_photos_id = '".$bestPhotosId."'
+            GROUP BY pp.id
+            ORDER BY count DESC"
+        );
+    }
+
+    public function others(Request $request) {
+
+
+        return view('admin.competitions.others', [
+            'menuItem' => 'others',
+            'competition' => Others::where('languages_id', ($request->post('language') ?? null))->first(),
+            'languages' => Language::all(),
+            'lang' => $request->post('language') ?? null
+        ]);
+    }
+
+    public function othersSave(Request $request) {
+        if(empty($request->post('description'))) {
+            return redirect()->to(route('others')."?language=".$request->post('language'));
+        }
+
+        if($request->post('id') != null) {
+            $others = Others::find($request->post('id'));
+        }
+        else {
+            $others = new Others();
+            $others->languages_id = $request->post('language');
+        }
+
+        $others->description = $request->post('description');
+        $others->date = date('d.m.Y');
+        $others->time = date('H:i:s');
+        $others->save();
+        return redirect()->to(route('others')."?language=".$request->post('language'));
+    }
+
+    public function othersDelete(Request $request) {
+        Others::where('id', $request->post('id'))->delete();
+        return redirect()->to(route('others')."?language=".$request->post('language'));
     }
 
 }

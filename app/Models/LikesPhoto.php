@@ -9,8 +9,8 @@ class LikesPhoto extends Model {
     protected $table = 'likes_photos';
     public $timestamps = false;
     public $fillable = [
-        'users_id',
-        'posts_photos_id'
+        'posts_photos_id',
+        'user_chat'
     ];
 
     public function post() {

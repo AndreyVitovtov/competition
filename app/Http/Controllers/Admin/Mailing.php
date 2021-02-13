@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 
 
 use App\Http\Controllers\Controller;
+use App\Models\Language;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
@@ -13,6 +14,7 @@ class Mailing extends Controller{
     public function index(Request $request) {
         $view = view('admin.mailing.mailing');
         $view->menuItem = "mailing";
+        $view->languages = Language::all();
 
         if(file_exists(public_path()."/json/mailing_task.json")) {
             $task = file_get_contents(public_path()."/json/mailing_task.json");
@@ -48,7 +50,7 @@ class Mailing extends Controller{
         if($request->hasFile('image')) {
             $file = $request->file('image');
             $fileName = time().$file->getClientOriginalName();
-            $file->move(public_path('\img\mailing'), $fileName);
+            $file->move(public_path('/img/mailing'), $fileName);
             $task['type'] = "img";
             $task['img'] = url('/')."/img/mailing/".$fileName;
             $task['text'] = empty($params['text']) ? null : $params['text'];
@@ -75,6 +77,8 @@ class Mailing extends Controller{
             $db = $db->where('country', $params['country']);
         }
 
+        $db = $db->where('languages_id', $params['language']);
+
         $count = $db->count();
 
         if($count == 0) {
@@ -87,6 +91,7 @@ class Mailing extends Controller{
         $task['performed'] = "false";
         $task['country'] = $params['country'];
         $task['messenger'] = $params['messenger'];
+        $task['language'] = $params['language'];
 
         file_put_contents(public_path('/json/mailing_task.json'), json_encode($task));
         file_put_contents(public_path('/txt/log.txt'), "");

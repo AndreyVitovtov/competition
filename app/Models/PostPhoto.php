@@ -14,7 +14,9 @@ class PostPhoto extends Model {
         'post_id',
         'count_likes',
         'users_id',
-        'best_photos_id'
+        'best_photos_id',
+        'photo',
+        'text'
     ];
 
     public function bestPhoto() {

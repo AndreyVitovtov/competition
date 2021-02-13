@@ -12,36 +12,36 @@
     <link rel="stylesheet" href="{{asset('css/settings.css')}}">
 
     <div class="settings settings_buttons">
-        <form action="{!! route('save-view-buttons') !!}" method="POST">
-            <div>
-                <div>
-                    <div>
-                        <label for="background_button">@lang('pages.settings_button_bg_color')</label>
-                    </div>
-                    <div>
-                        <label for="color_text_button">@lang('pages.settings_button_font_color')</label>
-                    </div>
-                    <div>
-                        <label for="size_text_button">@lang('pages.settings_button_font_size')</label>
-                    </div>
-                </div>
-                <div>
-                    <div>
-                        <input type="color" value="{{ $viewButtons->background }}" name="background" id="background_button">
-                    </div>
-                    <div>
-                        <input type="color" value="{{ $viewButtons->color_text }}" name="color_text" id="color_text_button">
-                    </div>
-                    <div>
-                        <input type="number" value="{{ $viewButtons->size_text }}" name="size_text" id="size_text_button">
-                    </div>
-                </div>
-            </div>
-            <input type="submit" value="@lang('pages.save')" class="button">
-            @csrf
-        </form>
-        <br>
-        <br>
+{{--        <form action="{!! route('save-view-buttons') !!}" method="POST">--}}
+{{--            <div>--}}
+{{--                <div>--}}
+{{--                    <div>--}}
+{{--                        <label for="background_button">@lang('pages.settings_button_bg_color')</label>--}}
+{{--                    </div>--}}
+{{--                    <div>--}}
+{{--                        <label for="color_text_button">@lang('pages.settings_button_font_color')</label>--}}
+{{--                    </div>--}}
+{{--                    <div>--}}
+{{--                        <label for="size_text_button">@lang('pages.settings_button_font_size')</label>--}}
+{{--                    </div>--}}
+{{--                </div>--}}
+{{--                <div>--}}
+{{--                    <div>--}}
+{{--                        <input type="color" value="{{ $viewButtons->background }}" name="background" id="background_button">--}}
+{{--                    </div>--}}
+{{--                    <div>--}}
+{{--                        <input type="color" value="{{ $viewButtons->color_text }}" name="color_text" id="color_text_button">--}}
+{{--                    </div>--}}
+{{--                    <div>--}}
+{{--                        <input type="number" value="{{ $viewButtons->size_text }}" name="size_text" id="size_text_button">--}}
+{{--                    </div>--}}
+{{--                </div>--}}
+{{--            </div>--}}
+{{--            <input type="submit" value="@lang('pages.save')" class="button">--}}
+{{--            @csrf--}}
+{{--        </form>--}}
+{{--        <br>--}}
+{{--        <br>--}}
         <div>
             <form action="{{ route('buttons-go-lang') }}">
                 <select name="lang" class="language-go">

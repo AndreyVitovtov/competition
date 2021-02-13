@@ -514,7 +514,7 @@ trait Universal {
         }
     }
 
-    public function saveFile($path = null, $name = null): ? string {
+    public function saveFile($path = null, $name = null, $folderName = null): ? string {
         $filePath = $this->getFilePath();
         if($this->messenger == "Telegram") {
             $ext = explode(".", $filePath);
@@ -528,8 +528,12 @@ trait Universal {
             $name = time().".".end($ext);
         }
 
+        if($folderName == null) {
+            $folderName = 'photo';
+        }
+
         if($path == null) {
-            if(copy($filePath, public_path()."/video/".$name)) return $name;
+            if(copy($filePath, public_path()."/".$folderName."/".$name)) return $name;
         }
         else {
             if(copy($filePath, $path.$name)) return $name;

@@ -34,7 +34,7 @@
         </form>
     @if($lang != null)
             <br>
-        <form action="{{ route('best-videos-save') }}" method="POST">
+        <form action="{{ route('best-videos-save') }}" method="POST" id="save">
             @csrf
             <input type="hidden" name="languages_id" value="{{ $lang }}">
             <label for="description">@lang('pages.description')</label>
@@ -43,23 +43,28 @@
             <label for="channel_id">@lang('pages.channel_id')</label>
             <input type="text" name="channel_id" value="{{ $competition->channel_id ?? "" }}" id="channel_id"
                @if($competition) disabled @endif>
+            <label for="channel_name">@lang('pages.channel_name')</label>
+            <input type="text" name="channel_name" value="{{ $competition->channel_name ?? "" }}" id="channel_name"
+                   @if($competition) disabled @endif>
             <br>
             <br>
-            @if(!$competition)
-                <input type="submit" value="@lang('pages.save')" class="button">
-            @endif
         </form>
             @if($competition)
-                <form action="" method="POST" id="complete">
+                <form action="{{ route('best-videos-complete') }}" method="POST" id="complete">
                     @csrf
                     <input type="hidden" name="best_videos_id" value="{{ $competition->id }}">
-                </form>
-                <form action="" id="archive" method="GET">
-                    <input type="hidden" name="language" value="{{ $lang ?? null }}">
+                    <input type="hidden" name="languages_id" value="{{ $competition->languages_id }}">
                 </form>
                 <button form="complete" class="button">@lang('pages.complete')</button>
+            @endif
+            @if(!$competition)
+                <button form="save" class="button">@lang('pages.save')</button>
+            @endif
                 <button form="archive" class="button"><i class="icon-archive"></i> @lang('pages.archive')</button>
-
+                <form action="{{ route('best-videos-archive') }}" id="archive" method="GET">
+                    <input type="hidden" name="language" value="{{ $lang ?? null }}">
+                </form>
+            @if($competition)
                 @if($res)
                     <br>
                     <br>

@@ -14,14 +14,26 @@
     <div class="mailing">
         <form action="/admin/mailing/send" method="POST" enctype="multipart/form-data">
             @csrf
+            <input type="hidden" name="messenger" value="Telegram">
+            <input type="hidden" name="country" value="all">
+{{--            <div>--}}
+{{--                <label>@lang('pages.mailing_select_country')</label>--}}
+{{--            </div>--}}
+{{--            <div>--}}
+{{--                <select name="country" class="country_mailing">--}}
+{{--                    <option value="all">@lang('pages.mailing_all')</option>--}}
+{{--                    @foreach($countries as $key => $country)--}}
+{{--                        <option value="{{ $key }}">{{ $country }}</option>--}}
+{{--                    @endforeach--}}
+{{--                </select>--}}
+{{--            </div>--}}
             <div>
-                <label>@lang('pages.mailing_select_country')</label>
+                <label for="language">@lang('pages.select_language'):</label>
             </div>
             <div>
-                <select name="country" class="country_mailing">
-                    <option value="all">@lang('pages.mailing_all')</option>
-                    @foreach($countries as $key => $country)
-                        <option value="{{ $key }}">{{ $country }}</option>
+                <select name="language" id="language">
+                    @foreach($languages as $language)
+                        <option value="{{ $language->id }}">{{ base64_decode($language->emoji) }} {{ $language->name }}</option>
                     @endforeach
                 </select>
             </div>
@@ -41,19 +53,19 @@
             <div>
                 <input type="url" name="url_image" placeholder="@lang('pages.url_image')">
             </div>
-            <div>
-                <label>@lang('pages.mailing_messenger')</label>
-            </div>
-            <div>
-                <input type="radio" name="messenger" value="%" id="all_messenger" checked>
-                <label for="all_messenger">@lang('pages.mailing_all')</label>
+{{--            <div>--}}
+{{--                <label>@lang('pages.mailing_messenger')</label>--}}
+{{--            </div>--}}
+{{--            <div>--}}
+{{--                <input type="radio" name="messenger" value="%" id="all_messenger" checked>--}}
+{{--                <label for="all_messenger">@lang('pages.mailing_all')</label>--}}
 
-                <input type="radio" name="messenger" value="Viber" id="viber">
-                <label for="viber">Viber</label>
+{{--                <input type="radio" name="messenger" value="Viber" id="viber">--}}
+{{--                <label for="viber">Viber</label>--}}
 
-                <input type="radio" name="messenger" value="Telegram" id="telegram">
-                <label for="telegram">Telegram</label>
-            </div>
+{{--                <input type="radio" name="messenger" value="Telegram" id="telegram">--}}
+{{--                <label for="telegram">Telegram</label>--}}
+{{--            </div>--}}
 
             <div class="block_buttons">
                 <button class="button">@lang('pages.send')</button>

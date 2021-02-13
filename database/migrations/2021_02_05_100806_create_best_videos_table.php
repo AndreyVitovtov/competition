@@ -21,6 +21,8 @@ class CreateBestVideosTable extends Migration
             $table->string('channel_id');
             $table->string('channel_name');
             $table->integer('active')->default(1);
+            $table->date('date');
+            $table->time('time');
 
             $table->foreign('languages_id')
                 ->references('id')->on('languages')

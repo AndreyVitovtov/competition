@@ -23,6 +23,10 @@ td {
     width: 49%;
 }
 
+.chart_statistics_2 > div {
+    display: inline-block;
+}
+
 @media (max-device-width: 766px) {
     .chart_statistics_2 {
         width: 100%;

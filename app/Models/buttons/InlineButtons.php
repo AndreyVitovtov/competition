@@ -61,11 +61,15 @@ class InlineButtons {
         ];
     }
 
-    public static function addToGroup($group_link) {
-        return [[[
-                "text" => "{group}",
-                "url" => $group_link
-            ]]];
+    public static function addToGroup($groups) {
+        $buttons = [];
+        foreach($groups as $group) {
+            $buttons[] = [[
+                'text' => "{group}",
+                'url' => $group->group_link
+            ]];
+        }
+        return $buttons;
     }
 
 
