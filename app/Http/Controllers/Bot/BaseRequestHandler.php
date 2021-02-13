@@ -265,7 +265,7 @@
 
         private function valueSubstitution($str, $type, $n = []) {
             $user = BotUsers::find($this->getUserId());
-            $language = Language::find($user->languages_id);
+            $language = Language::find($user->languages_id ?? 1);
             if(file_exists(public_path()."/json/".$type."_".($language->code ?? 'ru').".json")) {
                 $type = $type."_".($language->code ?? 'ru');
             }
@@ -363,6 +363,13 @@
             $message = $this->valueSubstitution($message, "pages", $n);
             $inlineKeyboard = $this->valueSubstitutionArray($inlineKeyboard, $n);
             return $this->getBot()->editMessageText($this->getChat(), $messageId, $message, $inlineKeyboard);
+        }
+
+        public function editMessageReplyMarkup($chat, $messageId, $inlineButtons = []) {
+            $reply_markup = [
+                'inline_keyboard' => $inlineButtons
+            ];
+            return $this->bot->editMessageReplyMarkup($chat, $messageId, $reply_markup);
         }
 
         public function startRef($chat) {

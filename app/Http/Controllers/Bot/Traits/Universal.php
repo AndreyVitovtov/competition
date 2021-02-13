@@ -655,7 +655,6 @@ trait Universal {
                 }
                 else {
                     if(isset($data['video']['file_id'])) {
-                        dd($this->getBot()->getFilePath($data['video']['file_id']));
                         return $this->getBot()->getFilePath($data['video']['file_id']);
                     }
                 }

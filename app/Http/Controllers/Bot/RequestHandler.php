@@ -250,7 +250,7 @@ class RequestHandler extends BaseRequestHandler {
     public function newChatParticipant() {
         $data = $this->getDataByType();
         $group = Groups::where('group_id', $data['chat']['id'])->first();
-        if($group->addToGroup->active == 1) {
+        if($group->addToGroup->active == '1') {
             if(Invited::where('referrer', $data['from']['id'])
                 ->where('referral', $data['whom']['id'])
                 ->where('groups_id', $group->id)
@@ -289,6 +289,16 @@ class RequestHandler extends BaseRequestHandler {
                     $likeVideo->user_chat = $userChat;
                     $likeVideo->save();
                     $this->answerCallbackQuery('{thank_you_for_rating}');
+                    $postVideo = PostVideo::find($postId);
+                    $channelId = $postVideo->bestVideo->channel_id;
+                    $postId = $postVideo->post_id;
+                    $countLikes = $postVideo->likes->count();
+                    $this->editMessageReplyMarkup($channelId, $postId, InlineButtons::like(
+                        'video',
+                        $postVideo->bestVideo->id,
+                        $postVideo->id,
+                        $countLikes)
+                    );
                 }
             }
         }
@@ -312,6 +322,17 @@ class RequestHandler extends BaseRequestHandler {
                     $likeVideo->user_chat = $userChat;
                     $likeVideo->save();
                     $this->answerCallbackQuery('{thank_you_for_rating}');
+
+                    $postPhoto = PostPhoto::find($postId);
+                    $channelId = $postPhoto->bestPhoto->channel_id;
+                    $postId = $postPhoto->post_id;
+                    $countLikes = $postPhoto->likes->count();
+                    $this->editMessageReplyMarkup($channelId, $postId, InlineButtons::like(
+                        'photo',
+                        $postPhoto->bestVideo->id,
+                        $postPhoto->id,
+                        $countLikes)
+                    );
                 }
             }
         }

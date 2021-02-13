@@ -29,6 +29,7 @@ class SettingsButtonsSeeder extends Seeder {
             ["id" => "13","name" => "otherCompetitions","text" => "8J+OryDQlNGA0YPQs9C40LUg0LrQvtC90LrRg9GA0YHRiw==","menu" => "competitions","menu_us" => "competitions"],
             ["id" => "14","name" => "subscribed","text" => "0J/QvtC00L/QuNGB0LDQu9GB0Y8=","menu" => "","menu_us" => ""],
             ["id" => "15","name" => "group","text" => "0JPRgNGD0L/Qv9Cw","menu" => "","menu_us" => ""],
+            ["id" => "16","name" => "like","text" => "8J+RjQ==","menu" => "","menu_us" => ""],
         ]);
     }
 }

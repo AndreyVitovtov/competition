@@ -20,6 +20,6 @@ class Groups extends Model {
     }
 
     public function addToGroup() {
-        return $this->belongsTo(AddToGroup::class, '');
+        return $this->belongsTo(AddToGroup::class, 'add_to_group_id');
     }
 }

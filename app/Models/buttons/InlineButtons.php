@@ -3,6 +3,7 @@
 namespace App\Models\buttons;
 
 use App\Models\Language;
+use App\Models\Text;
 
 class InlineButtons {
 
@@ -40,10 +41,18 @@ class InlineButtons {
         return $languages;
     }
 
-    public static function like() {
+    public static function like($type, $bestId, $postId,  $count = 0) {
+        if($type == 'video') {
+            $callbackQuery = 'likeBestVideo';
+        }
+        else {
+            $callbackQuery = 'likeBestPhoto';
+        }
+        $callbackQuery .= "__".$bestId."_".$postId;
+        $text = (($count) ? "👍 $count" : "👍");
         return [[[
-                "text" => "{like}",
-                "callback_data" => "like__50"
+                "text" => $text,
+                "callback_data" => $callbackQuery
             ]]];
     }
 

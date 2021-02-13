@@ -4,8 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\API\Telegram;
+use App\Models\BotUsers;
+use App\Models\buttons\Menu;
 use App\Models\PostPhoto;
 use App\Models\PostVideo;
+use App\Models\Text;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class ModerationOfCompetitions extends Controller {
@@ -52,6 +56,12 @@ class ModerationOfCompetitions extends Controller {
         $postId = json_decode($res)->result->message_id;
         PostVideo::where('id', $request->post('id'))->update(['post_id' => $postId]);
         unlink(public_path('video/'.$postVideo->video));
+
+        $text = new Text();
+        $user = BotUsers::find($postVideo->users_id);
+        $message = $text->valueSubstitution($user, '{video_published}', 'pages');
+        $telegram->sendMessage($user->chat, $message);
+
         return redirect()->to(route('moderation-of-competitions-video'));
     }
 
@@ -91,6 +101,11 @@ class ModerationOfCompetitions extends Controller {
         $postId = json_decode($res)->result->message_id;
         PostPhoto::where('id', $request->post('id'))->update(['post_id' => $postId]);
         unlink(public_path('photo/'.$postPhoto->photo));
+
+        $text = new Text();
+        $user = BotUsers::find($postPhoto->users_id);
+        $message = $text->valueSubstitution($user, '{photo_published}', 'pages');
+        $telegram->sendMessage($user->chat, $message);
         return redirect()->to(route('moderation-of-competitions-photo'));
     }
 

@@ -28,7 +28,10 @@ class Competitions extends Controller{
                 $groupId = $request['group'];
             }
 
-            $res = $this->countReferrals($groupId ?? null) ?? [];
+            if($addToGroup != null) {
+                $res = $this->countReferrals($groupId ?? $addToGroup->groups->first()->id) ?? [];
+            }
+
         }
 
         return view('admin.competitions.group-invitations', [

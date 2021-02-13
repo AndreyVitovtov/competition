@@ -27,7 +27,7 @@ class PostVideo extends Model {
     public function likes() {
         return $this->hasMany(
             LikesVideo::class,
-            'posts_videos_id'
+            'post_videos_id'
         );
     }
 }
