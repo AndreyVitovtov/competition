@@ -15,12 +15,12 @@ class CreateLikesPhotosTable extends Migration
     {
         Schema::create('likes_photos', function (Blueprint $table) {
             $table->engine = 'InnoDB';
-            $table->integer('post_photos_id')->unsigned();
+            $table->integer('posts_photos_id')->unsigned();
             $table->integer('user_chat')->unsigned();
 
-            $table->index('post_photos_id');
+            $table->index('posts_photos_id');
 
-            $table->foreign('post_photos_id')
+            $table->foreign('posts_photos_id')
                 ->references('id')->on('posts_photos')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');

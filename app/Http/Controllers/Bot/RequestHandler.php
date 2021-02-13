@@ -94,7 +94,7 @@ class RequestHandler extends BaseRequestHandler {
     private function checkSubscription() {
         $channel = $this->getUser()->language->channel ?? null;
 
-        if ($channel != null && !$this->getChatMember($this->getChat(), $channel->channel_id)) {
+        if ($channel != null && $channel->channel_id != '0' && !$this->getChatMember($this->getChat(), $channel->channel_id)) {
             $this->send('{check_subscription}',
                 InlineButtons::checkSubscription($channel->link), true
             );

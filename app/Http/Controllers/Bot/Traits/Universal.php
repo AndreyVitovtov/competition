@@ -107,6 +107,10 @@ trait Universal {
             $this->userId = $userId;
         }
         elseif($this->messenger == "Telegram") {
+            if(substr($this->chat, 0, 1) == '-') {
+                $this->userId = 0;
+                return;
+            }
             $botUsers = new BotUsers();
             $res = $botUsers->where('chat', $this->chat)->first();
             if(empty($res)) {
