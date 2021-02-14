@@ -26,4 +26,8 @@ class PostPhoto extends Model {
     public function user() {
         return $this->belongsTo(BotUsers::class, 'users_id');
     }
+
+    public function likes() {
+        return $this->hasMany(LikesPhoto::class, 'posts_photos_id');
+    }
 }

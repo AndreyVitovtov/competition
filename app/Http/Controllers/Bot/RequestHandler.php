@@ -327,9 +327,10 @@ class RequestHandler extends BaseRequestHandler {
                     $channelId = $postPhoto->bestPhoto->channel_id;
                     $postId = $postPhoto->post_id;
                     $countLikes = $postPhoto->likes->count();
+
                     $this->editMessageReplyMarkup($channelId, $postId, InlineButtons::like(
                         'photo',
-                        $postPhoto->bestVideo->id,
+                        $postPhoto->bestPhoto->id,
                         $postPhoto->id,
                         $countLikes)
                     );
